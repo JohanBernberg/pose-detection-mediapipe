@@ -6,7 +6,7 @@ from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
 # Crear un objeto PoseLandmarker
-model_asset_path = 'pose_landmarker_heavy.task'
+model_asset_path = 'model/pose_landmarker_heavy.task'
 base_options = python.BaseOptions(model_asset_path, delegate=python.BaseOptions.Delegate.CPU)
 
 def draw_landmarks_on_image(rgb_image, detection_result):
