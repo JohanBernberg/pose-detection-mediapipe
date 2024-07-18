@@ -1,6 +1,4 @@
-accelerate
-diffusers
-invisible_watermark
-torch
-transformers
-xformers
+gradio==4.38.1
+mediapipe==0.10.14
+numpy==1.26.3
+opencv-python==4.9.0.80
