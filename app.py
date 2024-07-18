@@ -1,146 +1,49 @@
 import gradio as gr
 import numpy as np
-import random
-from diffusers import DiffusionPipeline
-import torch
+from loading import load_model
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
+# Constantes que definen los límites mínimo y máximo para los sliders de Gradio
+MIN_CONF, MAX_CONF = 0, 1
+MIN_POS, MAX_POS = 1, 5
 
-if torch.cuda.is_available():
-    torch.cuda.max_memory_allocated(device=device)
-    pipe = DiffusionPipeline.from_pretrained("stabilityai/sdxl-turbo", torch_dtype=torch.float16, variant="fp16", use_safetensors=True)
-    pipe.enable_xformers_memory_efficient_attention()
-    pipe = pipe.to(device)
-else: 
-    pipe = DiffusionPipeline.from_pretrained("stabilityai/sdxl-turbo", use_safetensors=True)
-    pipe = pipe.to(device)
+def process_image(input_img, pos, confidence):
+    """
+    Aplica el modelo de pose en la imagen de entrada.
 
-MAX_SEED = np.iinfo(np.int32).max
-MAX_IMAGE_SIZE = 1024
+    Args:
+    input_img (np.ndarray): La imagen de entrada.
+    pos (float): Confianza mínima para la detección de poses.
+    confidence (int): Número máximo de poses a detectar.
 
-def infer(prompt, negative_prompt, seed, randomize_seed, width, height, guidance_scale, num_inference_steps):
+    Returns:
+    np.ndarray: Imagen anotada con los resultados de la detección.
+    """
+    img = load_model(input_img, float(pos), int(confidence))
+    return img
 
-    if randomize_seed:
-        seed = random.randint(0, MAX_SEED)
-        
-    generator = torch.Generator().manual_seed(seed)
-    
-    image = pipe(
-        prompt = prompt, 
-        negative_prompt = negative_prompt,
-        guidance_scale = guidance_scale, 
-        num_inference_steps = num_inference_steps, 
-        width = width, 
-        height = height,
-        generator = generator
-    ).images[0] 
-    
-    return image
+# Definición de los sliders para la interfaz de Gradio
+pos_slider = gr.Slider(minimum=MIN_CONF, maximum=MAX_CONF, value=0.5, step=0.1, label="Confianza de Detección", interactive=True)
+confidence_slider = gr.Slider(minimum=MIN_POS, maximum=MAX_POS, value=3, step=1, label="Número de Poses", interactive=True)
 
-examples = [
-    "Astronaut in a jungle, cold color palette, muted colors, detailed, 8k",
-    "An astronaut riding a green horse",
-    "A delicious ceviche cheesecake slice",
-]
-
-css="""
-#col-container {
-    margin: 0 auto;
-    max-width: 520px;
-}
-"""
-
-if torch.cuda.is_available():
-    power_device = "GPU"
-else:
-    power_device = "CPU"
-
-with gr.Blocks(css=css) as demo:
-    
-    with gr.Column(elem_id="col-container"):
-        gr.Markdown(f"""
-        # Text-to-Image Gradio Template
-        Currently running on {power_device}.
-        """)
-        
-        with gr.Row():
-            
-            prompt = gr.Text(
-                label="Prompt",
-                show_label=False,
-                max_lines=1,
-                placeholder="Enter your prompt",
-                container=False,
-            )
-            
-            run_button = gr.Button("Run", scale=0)
-        
-        result = gr.Image(label="Result", show_label=False)
-
-        with gr.Accordion("Advanced Settings", open=False):
-            
-            negative_prompt = gr.Text(
-                label="Negative prompt",
-                max_lines=1,
-                placeholder="Enter a negative prompt",
-                visible=False,
-            )
-            
-            seed = gr.Slider(
-                label="Seed",
-                minimum=0,
-                maximum=MAX_SEED,
-                step=1,
-                value=0,
-            )
-            
-            randomize_seed = gr.Checkbox(label="Randomize seed", value=True)
-            
-            with gr.Row():
-                
-                width = gr.Slider(
-                    label="Width",
-                    minimum=256,
-                    maximum=MAX_IMAGE_SIZE,
-                    step=32,
-                    value=512,
-                )
-                
-                height = gr.Slider(
-                    label="Height",
-                    minimum=256,
-                    maximum=MAX_IMAGE_SIZE,
-                    step=32,
-                    value=512,
-                )
-            
-            with gr.Row():
-                
-                guidance_scale = gr.Slider(
-                    label="Guidance scale",
-                    minimum=0.0,
-                    maximum=10.0,
-                    step=0.1,
-                    value=0.0,
-                )
-                
-                num_inference_steps = gr.Slider(
-                    label="Number of inference steps",
-                    minimum=1,
-                    maximum=12,
-                    step=1,
-                    value=2,
-                )
-        
-        gr.Examples(
-            examples = examples,
-            inputs = [prompt]
-        )
-
-    run_button.click(
-        fn = infer,
-        inputs = [prompt, negative_prompt, seed, randomize_seed, width, height, guidance_scale, num_inference_steps],
-        outputs = [result]
-    )
+# Creación de la interfaz de Gradio
+demo = gr.Interface(fn=process_image, 
+                          inputs=[gr.Image(), pos_slider, confidence_slider], 
+                          outputs=gr.Image(),
+                          title="Pose Detection App",
+                          description="Ajusta los parámetros y carga una imagen para detectar poses.",
+                          allow_flagging="never")
 
 demo.queue().launch()
+
+
+# # Iniciar la aplicación FastAPI
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+# Dependencias necesarias:
+# pip install fastapi uvicorn
+# pip install --upgrade gradio
+
+# Para ejecutar la aplicación:
+# uvicorn main:app --reload
