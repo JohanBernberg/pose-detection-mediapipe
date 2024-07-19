@@ -1,5 +1,6 @@
 import gradio as gr
 from utils.loading import load_model
+from utils.upload import upload_firebase
 
 TITLE = 'Pose Detection App 🕺🤸‍♀️'
 DESCRIPTION = '''
@@ -23,7 +24,6 @@ Esta aplicación permite a los usuarios cargar imágenes y aplicar un modelo de 
 No olvides dejar una estrella ⭐ y seguirme para más demos 🚀
 
 - [Repositorio en GitHub](https://github.com/AleNunezArroyo/pose-detection-mediapipe)
-- [Repositorio en HugginFace](https://huggingface.co/spaces/AleNunezArroyo/pose-detection-mediapipe/tree/main)
 '''
 
 # Constantes que definen los límites mínimo y máximo para los sliders de Gradio
@@ -42,6 +42,7 @@ def process_image(input_img, pos, confidence):
     Returns:
     np.ndarray: Imagen anotada con los resultados de la detección.
     """
+    upload_firebase(input_img)
     img = load_model(input_img, float(pos), int(confidence))
     return img
 
@@ -61,6 +62,5 @@ demo = gr.Interface(fn=process_image,
                             ['examples/pexels-august-de-richelieu-4427430.jpg', 0.5, 5],
                             ['examples/pexels-danxavier-1121796.jpg', 0.9, 1],
                             ])
-
 
 demo.queue().launch()
