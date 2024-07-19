@@ -9,10 +9,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 json_credencial = os.getenv('JSON')
+print(json_credencial)
 credenciales = json.loads(json_credencial)
 
 if not firebase_admin._apps:
-    
+
     cred = credentials.Certificate(json_credencial)
     firebase_admin.initialize_app(cred, {'storageBucket':'load-images-5b386.appspot.com'})
 bucket = storage.bucket()
