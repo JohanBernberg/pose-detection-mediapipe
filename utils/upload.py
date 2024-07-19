@@ -4,8 +4,12 @@ import random
 from datetime import datetime
 import cv2
 import os
+import json
+from dotenv import load_dotenv
+load_dotenv()
 
-json_credencial = os.getenv('JSON_CREDENCIAL')
+json_credencial = os.getenv('JSON')
+credenciales = json.loads(json_credencial)
 
 if not firebase_admin._apps:
     cred = credentials.Certificate(json_credencial)
