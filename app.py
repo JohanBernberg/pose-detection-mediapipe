@@ -1,6 +1,5 @@
 import gradio as gr
 from utils.loading import load_model
-from utils.upload import upload_firebase
 
 TITLE = 'Pose Detection App 🕺🤸‍♀️'
 DESCRIPTION = '''
@@ -42,7 +41,6 @@ def process_image(input_img, pos, confidence):
     Returns:
     np.ndarray: Imagen anotada con los resultados de la detección.
     """
-    upload_firebase(input_img)
     img = load_model(input_img, float(pos), int(confidence))
     return img
 
@@ -51,16 +49,15 @@ pos_slider = gr.Slider(minimum=MIN_CONF, maximum=MAX_CONF, value=0.5, step=0.1, 
 confidence_slider = gr.Slider(minimum=MIN_POS, maximum=MAX_POS, value=3, step=1, label="Número de Poses", interactive=True)
 
 # Creación de la interfaz de Gradio
-demo = gr.Interface(fn=process_image, 
-                    inputs=[gr.Image(), pos_slider, confidence_slider], 
-                    outputs=gr.Image(),
-                    title=TITLE,
-                    description=DESCRIPTION,
-                    allow_flagging="never",
-                    examples=
-                            [
-                            ['examples/pexels-august-de-richelieu-4427430.jpg', 0.5, 5],
-                            ['examples/pexels-danxavier-1121796.jpg', 0.9, 1],
-                            ])
+demo = gr.Interface(
+    fn=process_image, 
+    inputs=[gr.Image(), pos_slider, confidence_slider], 
+    outputs=gr.Image(),
+    title=TITLE,
+    description=DESCRIPTION,
+    allow_flagging="never",
+    examples=[
+        ['examples/pexels-august-de-richelieu-4427430.jpg', 0.5, 5],
+        ['examples/pexels-danxavier-1121796.jpg', 0.9, 1],])
 
 demo.queue().launch()
