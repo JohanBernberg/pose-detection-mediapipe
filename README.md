@@ -1,9 +1,13 @@
 # Detección de Poses con MediaPipe 🕺🤸‍♀️
 
-No olvides dejar una estrella ⭐ al repositorio y seguirme para más demos 🚀
+<p align="center" style="font-size: 15px;">
+    No olvides dejar una estrella ⭐ al repositorio y seguirme para más demos 🚀
+</p>
 
-👉 [Demo en HugginFace](https://huggingface.co/spaces/AleNunezArroyo/pose-detection-mediapipe) 🤗
-👉 [Mis Redes Sociales](https://beacons.ai/alenunezarroyo) 💻
+<p align="center" style="font-size: 15px;">
+    <a href="https://huggingface.co/spaces/AleNunezArroyo/pose-detection-mediapipe" style="text-decoration: underline;">Demo en HugginFace</a> -
+    <a href="https://beacons.ai/alenunezarroyo" style="text-decoration: underline;">Mis Redes Sociales</a> 
+</p>
 
 ![image](demo.png)
 
@@ -39,11 +43,11 @@ gradio app.py
 
 ## Uso de la Aplicación
 
-* 1️⃣ ​**Carga de Imágenes**​: Puedes cargar tus propias imágenes desde la galería, tomar fotografías a través de la interfaz de Gradio o probar los ejemplos.
-* 2️⃣ ​**Ajuste de Parámetros**​: Puedes ajustar dos parámetros usando deslizadores:
+* ​**Carga de Imágenes**​: Puedes cargar tus propias imágenes desde la galería, tomar fotografías a través de la interfaz de Gradio o probar los ejemplos.
+* ​**Ajuste de Parámetros**​: Puedes ajustar dos parámetros usando deslizadores:
   * `pos`: Define el nivel de confianza mínimo para la detección de poses.
   * `confidence`: Define el número de poses a detectar.
-* 2️⃣ ​**Visualización de Resultados**​: La imagen cargada es procesada por el modelo de detección de poses, y los resultados se visualizan en la imagen devuelta a la interfaz de Gradio. También puedes descargar la imagen procesada.
+* ​**Visualización de Resultados**​: La imagen cargada es procesada por el modelo de detección de poses, y los resultados se visualizan en la imagen devuelta a la interfaz de Gradio. También puedes descargar la imagen procesada.
 
 
 
